@@ -2,8 +2,10 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 from groq import Groq
 from decouple import config
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
+
 
 client = Groq(api_key = config("GROQ_API_KEY"))
 
@@ -14,6 +16,10 @@ class ChatRequest(BaseModel):
 
 class ChatResponse(BaseModel):
     completion: str
+
+@app.get("/")
+def root():
+    return {"message": "backend is running"}
 
 
 @app.post("/generate", response_model = ChatResponse)
@@ -31,4 +37,12 @@ async def generate(request: ChatRequest):
     completion = chat_completion.choices[0].message.content
 
     return ChatResponse(completion = completion)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # React app's origin
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
