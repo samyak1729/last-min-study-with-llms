@@ -1,4 +1,5 @@
 import React from 'react';
+import './index.css';
 import BackendIntegration from './BackendIntegration';
 import MarkdownTester from './MarkdownTester'
 

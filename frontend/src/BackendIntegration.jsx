@@ -4,7 +4,7 @@ import ReactMarkdown from "react-markdown";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import remarkGfm from "remark-gfm";
-import "./MarkdownStyles.css"; // Import custom styles
+import "./UIStyles.css"; // Import custom styles
 
 const BackendIntegration = () => {
   const [messages, setMessages] = useState(() => {
@@ -48,7 +48,7 @@ const BackendIntegration = () => {
   const renderMarkdown = (text) => (
     <ReactMarkdown
       remarkPlugins={[remarkGfm]}
-      className="markdown" // Add a CSS class for styling
+      className="markdown"
       components={{
         code({ inline, className, children, ...props }) {
           const match = /language-(\w+)/.exec(className || "");
@@ -74,28 +74,31 @@ const BackendIntegration = () => {
   );
 
   return (
-    <div>
-      <div style={{ height: "400px", overflowY: "scroll", border: "1px solid #ccc" }}>
+    <div className="app-container">
+      <header className="header"> Chat with Llama3</header>
+      <div className="chat-container">
         {messages.map((msg, index) => (
-          <div key={index} style={{ padding: "8px", textAlign: msg.role === "user" ? "right" : "left" }}>
-            <strong>{msg.role === "user" ? "You" : "Bot"}:</strong>
-            <div>
-              {msg.role === "bot" ? renderMarkdown(msg.content) : <span>{msg.content}</span>}
-            </div>
+          <div
+            key={index}
+            className={`message ${msg.role === "user" ? "user-message" : "bot-message"}`}
+          >
+            {msg.role === "bot" ? renderMarkdown(msg.content) : <span>{msg.content}</span>}
           </div>
         ))}
       </div>
-      <input
-        type="text"
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        placeholder="Type your message"
-        style={{ width: "80%", padding: "10px", margin: "10px" }}
-        disabled={isLoading}
-      />
-      <button onClick={handleSend} style={{ padding: "10px" }} disabled={isLoading}>
-        {isLoading ? "Sending..." : "Send"}
-      </button>
+      <div className="input-container">
+        <input
+          type="text"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Type your message..."
+          disabled={isLoading}
+          className="input-box"
+        />
+        <button onClick={handleSend} className="send-button" disabled={isLoading}>
+          {isLoading ? "..." : "Send"}
+        </button>
+      </div>
     </div>
   );
 };
